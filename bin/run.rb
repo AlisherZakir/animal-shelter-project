@@ -7,9 +7,10 @@ require_relative '../db/seeds.rb'
 # Cat.create(name: name_cats.sample)
 # end
 
+Terminal.new.clean.greeting.show_menu
 
 
-Pry.start
-
-
-puts "hello world"
+# Pry.start
+#
+#
+# puts "hello world"
