@@ -1,9 +1,16 @@
 require "date"
 
-#remove prev data
-User.delete_all
-Pet.delete_all
-Adoption.delete_all
+Terminal.new.clean
+
+spinner = TTY::Spinner.new("[:spinner] Loading ...", format: :classic, success_mark: '+')
+
+spinner.auto_spin # Automatic animation with default interval
+
+# remove prev data
+# Rake::Task['db:drop'].invoke
+# Rake::Task['db:migrate'].invoke
+system("rake db:drop")
+system("rake db:migrate")
 
 
 
@@ -49,3 +56,5 @@ end
         adoption_date: Date.new([2018,2019].sample, rand(12) + 1, rand(28)+1)
   )
 end
+
+spinner.success('Done!') # Stop animation
