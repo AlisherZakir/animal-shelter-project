@@ -1,55 +1,82 @@
 class Terminal
 
+  attr_reader :user
+
   def initialize
     @prompt = TTY::Prompt.new
-    @user = User.all.first
+    @user = User.all.last
   end
-  def greeting
-    puts "|.........................|"
-    puts "|.........................|"
-    puts "|.........................|"
-    puts "|Welcome to the Pet World!|"
-    puts "|.........................|"
-    puts "|.........................|"
-    puts "|.........................|"
-    @prompt.yes?('Are you a new user?')
+
+  def greeting    
+puts '                      WELCOME TO THE PETWORLD APP                           '    
+puts '                      /^--^\     /^--^\     /^--^\ '
+puts '                      \____/     \____/     \____/ '
+puts '                     /      \   /      \   /      \ '
+puts '                    |        | |        | |        | '
+puts '                     \__  __/   \__  __/   \__  __/ '
+puts "|^|^|^|^|^|^|^|^|^|^|^|^\ \^|^|^|^/ /^|^|^|^|^\ \^|^|^|^|^|^|^|^|^|^|^|^|"
+puts "| | | | | | | | | | | | |\ \| | |/ /| | | | | | \ \ | | | | | | | | | | |"
+puts '########################/ /######\ \###########/ /#######################'
+puts "| | | | | | | | | | | | \/| | | | \/| | | | | |\/ | | | | | | | | | | | |"
+puts "|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|"
+    @prompt.yes?('Are you a new user?') ? "signup" : "login"
   end
 
   def signup
-    answers = @prompt.collect do
-      key(:first_name).ask('What is your first name?')
-      key(:last_name).ask('What is your last name?')
-      key(:post_code).ask('What is your postcode?')
-      key(:age).ask('How old are you?') do |q|
-        q.validate(/^((?!\D).)*$/, "Please provide a number")
-        q.required true
-        q.in("0-99")
+    answers = ""
+    loop do
+      answers = @prompt.collect do
+        %w(first_name last_name).each do |item|
+          key(item).ask("What is your #{item.split("_").join(" ")}?") do |q|
+            q.validate(/^((?!\d).)*$/)
+            q.required true
+          end
+        end
+        key(:location).ask('What is your location?')
+        key(:age).ask('How old are you?') do |q|
+          q.validate(/^((?!\D).)*$/, "Please provide a number")
+          q.required true
+          q.in("0-99")
+        end
       end
-      key(:password).mask('Enter a password')
+      first, last = answers["first_name"], answers["last_name"]
+      break if User.find_by(name: "#{first} #{last}").nil?
     end
-   password = ''
-   confirm_password = ''
-
-   loop do
+    loop do
     password = @prompt.mask('Enter a password')
-    confirm_password = @prompt.mask("Please confirm your password!")
+    confirm_password = @prompt.mask('Please confirm your password!')
     if password != confirm_password
       puts "Please, make sure your password and confirmation password are matching."
     end
-    break if password == confirm_password
-  end
-  User.create(answers)
-  puts "Account Created!"
-  false
-  end
-
+      if password == confirm_password
+        answers[:password] = password
+        break
+      end
+    end
+    User.create(answers)
+    puts "Account Created!"
+    "greeting"
+end
 
   def login
-    first_name = @prompt.ask('What is your first name?')
+    full_name = ''
+    password = ''
+    loop do
+    full_name = @prompt.ask('What is your full name?')
     password = @prompt.mask("Please enter your password!")
-    @user = User.find_by(first_name: first_name, password: password)
-    !@user.nil?
+    break if !(full_name.nil? || password.nil?)
+    end
+    @user = User.find_by(name: full_name)
+    if !@user
+      if @prompt.yes?("Sorry, but we can not find you in our record. Would you like to sign up?")
+        "signup"
+      end
+    else
+      "greeting"
+    end
+
   end
+
 
   def clean
     system("clear && printf '\e[3J'")
@@ -68,7 +95,7 @@ class Terminal
     puts "Logged in as #{@user.full_name}"
     puts ""
     puts ""
-    choices = ["tables", "make_donation", "adopt_a_pet", "table_update", "delete_record" "Show me pets nearby", "log off"]
+    choices = ["tables", "make_donation", "adopt_a_pet", "table_update", "delete_record", "show_me_pets_nearby", "show_my_pets", "log off"]
     @prompt.select("What would you like to do?", choices)
   end
 
@@ -86,6 +113,7 @@ class Terminal
     hash[key] = @prompt.ask("Set a new value: ")
     record.update(hash)
     Table.new(record.attributes.keys, [record]).render
+    @user = User.find_by(id: @user.id)
   end
 
 
@@ -120,23 +148,20 @@ class Terminal
 
 
   def self.run
-    # loop do
       cli = new
-      # puts "Sign up or login?"
-      # input = gets.chomp
-      # break if input == "Exit"
       loop do
-        break if (cli.greeting ? cli.signup : cli.login)
+        choice = cli.greeting
+        break if choice == "logged_in"
+        cli.send(choice)
       end
 
-      puts "Welcome #{@user.first_name}"
+      puts "Welcome #{cli.user.first_name}"
 
       loop do
         choice = cli.show_menu
         break if choice == "log off"
         cli.send(choice)
       end
-    # end
   end
 
   def get_correct_pet(prompt)
@@ -161,4 +186,18 @@ class Terminal
     Adoption.create(pet_id: pet.id, user_id: @user.id, adoption_date: Date.today)
     puts "#{pet.name} was succesfully adopted"
   end
+
+
+  def show_me_pets_nearby
+    puts @user.first_name
+    puts @user.location
+    pets = Shelter.where(location: @user.location).map(&:pets).flatten
+    Table.new(Pet.column_names, pets).render
+  end
+
+  def show_my_pets
+    @user.pets
+    Table.new(Pet.column_names, @user.pets).render
+  end
+
 end

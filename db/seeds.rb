@@ -6,19 +6,16 @@ spinner = TTY::Spinner.new("[:spinner] Loading ...", format: :classic, success_m
 
 spinner.auto_spin # Automatic animation with default interval
 
-# remove prev data
-# Rake::Task['db:drop'].invoke
-# Rake::Task['db:migrate'].invoke
-# system("rm db/development.db")
-# system("rake db:migrate")
-
-#
-
-# 15.times do
-#   User.create(
-#         first_name: Faker::Name.first_name,
-#         last_name: Faker::Name.last_name,
-#         age: Faker::Number.number(2),
+15.times do
+User.create(
+first_name: Faker::Name.first_name,
+last_name: Faker::Name.last_name,
+age: Faker::Number.number(2),
+location: Faker::Address.city,
+password: "easyone"
+)
+end
+        
 #         password: "12345"
 # )
 # end
