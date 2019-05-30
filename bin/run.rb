@@ -5,7 +5,7 @@ require_relative '../db/seeds.rb'
 Terminal.run
 
 
-Pry.start
+# Pry.start
 #
 #
 # puts "hello world"

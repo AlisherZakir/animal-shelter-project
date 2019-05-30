@@ -9,6 +9,7 @@ class CreateCats < ActiveRecord::Migration[5.2]
       t.string :size
       t.string :color
       t.string :temperament
+      t.integer :shelter_id
     end
   end
 end

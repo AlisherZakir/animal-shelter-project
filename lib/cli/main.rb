@@ -3,7 +3,7 @@ class Terminal
 
   def initialize
     @prompt = TTY::Prompt.new
-    @user_access = ""
+    @user = User.all.first
   end
 
   def greeting
@@ -17,8 +17,7 @@ class Terminal
    post_code = @prompt.ask('What is your postcode?')
    age = @prompt.ask('How old are you?', convert: :int)
    password = @prompt.mask('Enter a password')
-   @user = User.create(first_name: first_name, last_name: last_name, post_code: post_code,password: password, age: age)
-   puts @user
+   User.create(first_name: first_name, last_name: last_name, post_code: post_code,password: password, age: age)
    puts "Account Created!"
    false
   end
@@ -27,9 +26,8 @@ class Terminal
   def login
     first_name = @prompt.ask('What is your first name?')
     password = @prompt.mask("Please enter your password!")
-    @user_access = User.find_by(first_name: first_name, password: password)
-    !@user_access.nil?
-
+    @user = User.find_by(first_name: first_name, password: password)
+    !@user.nil?
   end
 
   def clean
@@ -44,7 +42,12 @@ class Terminal
 
 
   def show_menu
-    choices = ["tables", "Make a donation", "Adopt a pet", "Adopt a pet (for real)", "Show me pets nearby", "log off"]
+    puts ""
+    puts ""
+    puts "Logged in as #{@user.full_name}"
+    puts ""
+    puts ""
+    choices = ["tables", "make_donation", "adopt_a_pet", "Show me pets nearby", "log off"]
     @prompt.select("What would you like to do?", choices)
   end
 
@@ -74,39 +77,44 @@ class Terminal
 
 
   def self.run
-    loop do
+    # loop do
       cli = new
-      # puts "Sign up or login?"
-      # input = gets.chomp
-      # break if input == "Exit"
-      loop do
-        break if (cli.greeting ? cli.signup : cli.login)
-      end
+    #   # puts "Sign up or login?"
+    #   # input = gets.chomp
+    #   # break if input == "Exit"
+    #   loop do
+    #     break if (cli.greeting ? cli.signup : cli.login)
+    #   end
 
       loop do
-        choice = cli.greeting.show_menu
+        choice = cli.show_menu
         break if choice == "log off"
         cli.send(choice)
       end
-    end
+    # end
+  end
+
+  def get_correct_pet(prompt)
+    pet = Pet.find_by(name: @prompt.ask(prompt)) until pet
+    pet
   end
 
 
   def make_donation
-    valid = false
-    show_pets
-    amount = @prompt.ask('How much would you like to donate?') until amount.to_i != 0
-    while !valid
-      pet_name = @prompt.ask('Which pet do you want to help?')
-      pet = Pet.find_by(name: pet_name)
-      if pet
-        valid = true
-      end
-    end
-    donation = Donation.create(user_id: @user.id,pet_id: pet.id, amount: amount)
-    puts donation
-    puts "#{pet.name} recieved #{donation.amount}"
-    self
+    show_table("Pet", :name)
+    settings = {user_id: @user.id, amount: 0}
+    settings[:amount] = @prompt.ask('How much would you like to donate?').to_i until settings[:amount] != 0
+    pet = get_correct_pet('Which pet do you want to help?')
+    settings[:pet_id] = pet.id
+    donation = Donation.create(settings)
+    puts "#{pet.name} received $#{donation.amount}"
+  end
+
+  def adopt_a_pet
+    show_table("Pet", :name)
+    pet = get_correct_pet("Who would you like to adopt")
+    Adoption.create(pet_id: pet.id, user_id: @user.id, adoption_date: Date.today)
+    puts "#{pet.name} was succesfully adopted"
   end
 
 
