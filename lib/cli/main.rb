@@ -1,13 +1,17 @@
 class Terminal
 
-
   def initialize
     @prompt = TTY::Prompt.new
     @user = User.all.first
   end
-
   def greeting
-    puts "Welcome"
+    puts "|.........................|"
+    puts "|.........................|"
+    puts "|.........................|"
+    puts "|Welcome to the Pet World!|"
+    puts "|.........................|"
+    puts "|.........................|"
+    puts "|.........................|"
     @prompt.yes?('Are you a new user?')
   end
 
@@ -17,14 +21,26 @@ class Terminal
       key(:last_name).ask('What is your last name?')
       key(:post_code).ask('What is your postcode?')
       key(:age).ask('How old are you?') do |q|
-        q.validate(/^((?!\D).)*$/, "Invalid age")
+        q.validate(/^((?!\D).)*$/, "Please provide a number")
         q.required true
+        q.in("0-99")
       end
       key(:password).mask('Enter a password')
     end
-    User.create(answers)
-    puts "Account Created!"
-    false
+   password = ''
+   confirm_password = ''
+
+   loop do
+    password = @prompt.mask('Enter a password')
+    confirm_password = @prompt.mask("Please confirm your password!")
+    if password != confirm_password
+      puts "Please, make sure your password and confirmation password are matching."
+    end
+    break if password == confirm_password
+  end
+  User.create(answers)
+  puts "Account Created!"
+  false
   end
 
 
@@ -113,6 +129,8 @@ class Terminal
         break if (cli.greeting ? cli.signup : cli.login)
       end
 
+      puts "Welcome #{@user.first_name}"
+
       loop do
         choice = cli.show_menu
         break if choice == "log off"
@@ -143,7 +161,4 @@ class Terminal
     Adoption.create(pet_id: pet.id, user_id: @user.id, adoption_date: Date.today)
     puts "#{pet.name} was succesfully adopted"
   end
-
-
-
 end

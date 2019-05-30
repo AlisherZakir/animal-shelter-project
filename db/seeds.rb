@@ -13,12 +13,13 @@ spinner.auto_spin # Automatic animation with default interval
 # system("rake db:migrate")
 
 #
-#
+
 # 15.times do
 #   User.create(
 #         first_name: Faker::Name.first_name,
 #         last_name: Faker::Name.last_name,
-#         age: Faker::Number.number(2)
+#         age: Faker::Number.number(2),
+#         password: "12345"
 # )
 # end
 #
@@ -64,7 +65,7 @@ spinner.auto_spin # Automatic animation with default interval
 #
 # #adoptions
 #
-#Pet.all.each do |pet|
+# Pet.all.each do |pet|
 #   Adoption.create(
 #         user_id: User.all.sample.id,
 #         pet_id: pet.id,
