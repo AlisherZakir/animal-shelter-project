@@ -12,14 +12,19 @@ class Terminal
   end
 
   def signup
-   first_name = @prompt.ask('What is your first name?')
-   last_name = @prompt.ask('What is your last name?')
-   post_code = @prompt.ask('What is your postcode?')
-   age = @prompt.ask('How old are you?', convert: :int)
-   password = @prompt.mask('Enter a password')
-   User.create(first_name: first_name, last_name: last_name, post_code: post_code,password: password, age: age)
-   puts "Account Created!"
-   false
+    answers = @prompt.collect do
+      key(:first_name).ask('What is your first name?')
+      key(:last_name).ask('What is your last name?')
+      key(:post_code).ask('What is your postcode?')
+      key(:age).ask('How old are you?') do |q|
+        q.validate(/^((?!\D).)*$/, "Invalid age")
+        q.required true
+      end
+      key(:password).mask('Enter a password')
+    end
+    User.create(answers)
+    puts "Account Created!"
+    false
   end
 
 
@@ -47,12 +52,34 @@ class Terminal
     puts "Logged in as #{@user.full_name}"
     puts ""
     puts ""
-    choices = ["tables", "make_donation", "adopt_a_pet", "Show me pets nearby", "log off"]
+    choices = ["tables", "make_donation", "adopt_a_pet", "table_update", "delete_record" "Show me pets nearby", "log off"]
     @prompt.select("What would you like to do?", choices)
   end
 
+  def delete_record
+    choices = %w(Pet User Adoption Shelter Donation)
+    record = find_record(@prompt.select("Select database", choices))
+    record.destroy
+  end
+
+  def table_update
+    choices = %w(Pet User Adoption Shelter Donation)
+    record = find_record(@prompt.select("Select database", choices))
+    key = @prompt.select("Select attribute", record.attributes.keys)
+    hash = {}
+    hash[key] = @prompt.ask("Set a new value: ")
+    record.update(hash)
+    Table.new(record.attributes.keys, [record]).render
+  end
+
+
+  def find_record(klass)
+    record = Module.const_get(klass).find_by(name: @prompt.ask("Enter name:")) until record
+    record
+  end
+
   def tables
-    choices = %w(Pet User Adoption)
+    choices = %w(Pet User Adoption Shelter Donation)
     choose_vars(@prompt.select("Select database", choices))
   end
 
@@ -79,12 +106,12 @@ class Terminal
   def self.run
     # loop do
       cli = new
-    #   # puts "Sign up or login?"
-    #   # input = gets.chomp
-    #   # break if input == "Exit"
-    #   loop do
-    #     break if (cli.greeting ? cli.signup : cli.login)
-    #   end
+      # puts "Sign up or login?"
+      # input = gets.chomp
+      # break if input == "Exit"
+      loop do
+        break if (cli.greeting ? cli.signup : cli.login)
+      end
 
       loop do
         choice = cli.show_menu

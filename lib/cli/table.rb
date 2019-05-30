@@ -13,10 +13,10 @@ class Table
           column column, align: 'center'
         end
       end
-      @data.each do |pet|
+      @data.each do |record|
         row  do
           @columns.each do |column|
-            column pet[column], align: 'center'
+            column record[column], align: 'center'
           end
         end
       end
