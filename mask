@@ -1,0 +1,15 @@
+
+[1mFrom:[0m /home/pedro/Desktop/Project/animal-shelter-project/lib/cli/main.rb @ line 34 self.signup:
+
+    [1;34m29[0m:         q.required [1;36mtrue[0m
+    [1;34m30[0m:         q.in([31m[1;31m"[0m[31m0-99[1;31m"[0m[31m[0m)
+    [1;34m31[0m:       [32mend[0m
+    [1;34m32[0m:       loop [32mdo[0m
+    [1;34m33[0m:       key([33m:password[0m).mask([31m[1;31m'[0m[31mEnter a password[1;31m'[0m[31m[0m)
+ => [1;34m34[0m:       binding.pry
+    [1;34m35[0m:       key([33m:confirm_password[0m).mask([31m[1;31m'[0m[31mPlease confirm your password![1;31m'[0m[31m[0m)
+    [1;34m36[0m:       [32mif[0m [33m:password[0m != confirm_password
+    [1;34m37[0m:         puts [31m[1;31m"[0m[31mPlease, make sure your password and confirmation password are matching.[1;31m"[0m[31m[0m
+    [1;34m38[0m:       [32mend[0m
+    [1;34m39[0m:       [32mbreak[0m [32mif[0m password == confirm_password
+
