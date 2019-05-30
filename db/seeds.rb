@@ -49,3 +49,13 @@ end
         adoption_date: Date.new([2018,2019].sample, rand(12) + 1, rand(28)+1)
   )
 end
+
+#donations
+20.times do
+  Donation.create(
+        user_id: User.all.sample.id,
+        pet_id: Pet.all.sample.id,
+        amount: rand(10..1000)
+  )
+end
+
