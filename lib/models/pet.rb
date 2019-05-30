@@ -1,5 +1,6 @@
 class Pet < ActiveRecord::Base
-  has_many :users, through: :adoptions
-  has_many :adoptions
+  has_one :adoption
+  has_one :user, through: :adoption
   has_many :donations, through: :users
+  belongs_to :shelter
 end
