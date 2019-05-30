@@ -1,5 +1,7 @@
 class Terminal
 
+attr_reader :user
+
   def initialize
     @prompt = TTY::Prompt.new
     @user = User.all.first
@@ -65,16 +67,17 @@ class Terminal
   def show_menu
     puts ""
     puts ""
-    puts "Logged in as #{@user.full_name}"
+    puts "Logged in as #{@user.name}"
     puts ""
     puts ""
-    choices = ["tables", "make_donation", "adopt_a_pet", "table_update", "delete_record" "Show me pets nearby", "log off"]
+    choices = ["tables", "make_donation", "adopt_a_pet", "table_update", "delete_record", "Show me pets nearby", "log off"]
     @prompt.select("What would you like to do?", choices)
   end
 
   def delete_record
     choices = %w(Pet User Adoption Shelter Donation)
     record = find_record(@prompt.select("Select database", choices))
+    puts "#{record.name} was successfuly deleted"
     record.destroy
   end
 
@@ -119,17 +122,19 @@ class Terminal
   end
 
 
+
+
   def self.run
     # loop do
       cli = new
       # puts "Sign up or login?"
       # input = gets.chomp
       # break if input == "Exit"
-      loop do
-        break if (cli.greeting ? cli.signup : cli.login)
-      end
+      # loop do
+      #   break if (cli.greeting ? cli.signup : cli.login)
+      # end
 
-      puts "Welcome #{@user.first_name}"
+      puts "Welcome #{cli.user.first_name}"
 
       loop do
         choice = cli.show_menu

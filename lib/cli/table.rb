@@ -5,7 +5,7 @@ class Table
     @data = data
   end
   def render
-    header title: 'The table', align: 'center', width: 60
+    header title: 'The table', align: 'center'
 
     table border: true do
       row header: true, color: 'red'  do
