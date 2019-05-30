@@ -1,0 +1,14 @@
+
+[1mFrom:[0m /home/pedro/Desktop/Project/animal-shelter-project/lib/cli/main.rb @ line 83 Terminal.run:
+
+    [1;34m81[0m: [32mdef[0m [1;36mself[0m.[1;34mrun[0m
+    [1;34m82[0m:   cli = new
+ => [1;34m83[0m:   binding.pry
+    [1;34m84[0m:   loop [32mdo[0m
+    [1;34m85[0m:     [32mbreak[0m [32mif[0m (cli.greeting ? cli.signup : cli.login)
+    [1;34m86[0m:   [32mend[0m
+    [1;34m87[0m:   loop [32mdo[0m
+    [1;34m88[0m:     cli.show_menu
+    [1;34m89[0m:   [32mend[0m
+    [1;34m90[0m: [32mend[0m
+
