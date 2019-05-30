@@ -7,8 +7,8 @@ class Terminal
     @user = User.all.last
   end
 
-  def greeting    
-puts '                      WELCOME TO THE PETWORLD APP                           '    
+  def greeting
+puts '                      WELCOME TO THE PETWORLD APP                           '
 puts '                      /^--^\     /^--^\     /^--^\ '
 puts '                      \____/     \____/     \____/ '
 puts '                     /      \   /      \   /      \ '
@@ -92,7 +92,7 @@ end
   def show_menu
     puts ""
     puts ""
-    puts "Logged in as #{@user.full_name}"
+    puts "Logged in as #{@user.name}"
     puts ""
     puts ""
     choices = ["tables", "make_donation", "adopt_a_pet", "table_update", "delete_record", "show_me_pets_nearby", "show_my_pets", "log off"]
@@ -102,6 +102,7 @@ end
   def delete_record
     choices = %w(Pet User Adoption Shelter Donation)
     record = find_record(@prompt.select("Select database", choices))
+    puts "#{record.name} was successfuly deleted"
     record.destroy
   end
 
@@ -145,6 +146,8 @@ end
     end
     Table.new(columns, data).render
   end
+
+
 
 
   def self.run
