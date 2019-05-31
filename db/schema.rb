@@ -16,6 +16,8 @@ ActiveRecord::Schema.define(version: 2019_05_29_203700) do
     t.date "adoption_date"
     t.integer "user_id"
     t.integer "pet_id"
+    t.index ["pet_id"], name: "index_adoptions_on_pet_id"
+    t.index ["user_id"], name: "index_adoptions_on_user_id"
   end
 
   create_table "donations", force: :cascade do |t|
@@ -46,6 +48,7 @@ ActiveRecord::Schema.define(version: 2019_05_29_203700) do
     t.string "last_name"
     t.string "location"
     t.integer "age"
+    t.string "username"
     t.string "password"
   end
 
