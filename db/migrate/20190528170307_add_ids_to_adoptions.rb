@@ -1,6 +1,6 @@
 class AddIdsToAdoptions < ActiveRecord::Migration[5.2]
   def change
-    add_column :adoptions, :user_id, :integer
-    add_column :adoptions, :pet_id, :integer
+    add_reference :adoptions, :user, foreign_key: true
+    add_reference :adoptions, :pet, foreign_key: true
   end
 end

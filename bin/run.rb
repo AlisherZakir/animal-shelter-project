@@ -9,41 +9,41 @@ require_relative '../db/seeds.rb'
 #Doesn't work
 # require_relative '../demos/lp/main.rb'
 
-# Terminal.run
+Terminal.run
 
 # RuTui::Theme.use :dark
 
-
-
-screen = RuTui::Screen.new
-
-size = RuTui::Screen.size
-
-screen.add_static RuTui::Text.new({ :x => size[1]/2-30, :y  => 2, :text => "use the cursor keys to choose the sprite or q/CTRL+C to quit" })
-
-res_dir = File.dirname(__FILE__) + '/'
-
-sprites = RuTui::Sprite.new({ :x => size[1]/2-6, :y => 5, :file => res_dir + 'space-invader_sprite.axx' })
-screen.add sprites
-
-Thread.new {
-	while true
-		sprites.update
-		RuTui::ScreenManager.draw
-	end
-}
-
-
-RuTui::ScreenManager.loop({ :autofit => true, :autodraw => false }) do |key|
-
-
-	break if key == :ctrl_c or key == "q"
-
-	# We can translate the key symbol to a string to set the sprite
-	if [:up, :down, :left, :right].include? key
-		sprites.set_current key.to_s
-	end
-end
+#
+#
+# screen = RuTui::Screen.new
+#
+# size = RuTui::Screen.size
+#
+# screen.add_static RuTui::Text.new({ :x => size[1]/2-30, :y  => 2, :text => "use the cursor keys to choose the sprite or q/CTRL+C to quit" })
+#
+# res_dir = File.dirname(__FILE__) + '/'
+#
+# sprites = RuTui::Sprite.new({ :x => size[1]/2-6, :y => 5, :file => res_dir + 'space-invader_sprite.axx' })
+# screen.add sprites
+#
+# Thread.new {
+# 	while true
+# 		sprites.update
+# 		RuTui::ScreenManager.draw
+# 	end
+# }
+#
+#
+# RuTui::ScreenManager.loop({ :autofit => true, :autodraw => false }) do |key|
+#
+#
+# 	break if key == :ctrl_c or key == "q"
+#
+# 	# We can translate the key symbol to a string to set the sprite
+# 	if [:up, :down, :left, :right].include? key
+# 		sprites.set_current key.to_s
+# 	end
+# end
 
 
 
